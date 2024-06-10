@@ -19,8 +19,9 @@ public class Item
 		Item other = (Item)obj;
 		return this.gname.equals(other.gname) && this.price == other.price;  //비교의 기준 제시
 	}
-	
-	
+	public String getGname() {
+		return gname;
+	}
 	public void setGname(String gname) {
 		this.gname = gname;
 	}
@@ -36,6 +37,9 @@ public class Item
 	public void setQty(int qty) {
 		this.qty = qty;
 	}
+	
+	
+
 	
 	
 }

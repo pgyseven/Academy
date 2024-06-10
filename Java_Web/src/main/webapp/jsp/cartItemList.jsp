@@ -24,7 +24,7 @@
          int qty = item.getQty();
    %>
          <tr>
-            <td><%=item.get()%></td>
+            <td><%=item.getGname()%></td>
             <td><%=price%></td>
             <td><%=qty%></td>
             <td><%=price*qty%></td>
