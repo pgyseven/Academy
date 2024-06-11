@@ -31,4 +31,23 @@ public class Cart
       }
       return total;
    }
+
+   public boolean itemChange(Item key) {
+      if(list.contains(key)) {
+         list.get(list.indexOf(key)).setQty(key.getQty());
+         return true;
+      }
+      return false;
+   }
+
+   public boolean delItem(Item key) {
+	   if(list.contains(key)) {
+	         list.remove(key);
+	         return true;
+	      }
+	
+	   return false;
+   }
+   
+   
 }

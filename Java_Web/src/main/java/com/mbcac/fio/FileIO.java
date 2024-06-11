@@ -13,7 +13,7 @@ import com.mbcac.vo.User;
 
 public class FileIO 
 {
-   private static String filePath = "C:/eclipse-workspace/Java_Web/src/main/webapp/users.txt";
+   private static String filePath = "C:/Users/802-01/git/Academy/Academy/Java_Web/src/main/webapp/users.txt";
 
    public boolean login(User user) {
       List<User> list = getList();

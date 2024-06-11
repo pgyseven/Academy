@@ -5,6 +5,14 @@
 <head>
 <meta charset="UTF-8">
 <title>로그인 폼</title>
+<style type="text/css">
+ main{ border:1px solid black; width:fit-content; margin:0.5em auto; padding:0.5em;}
+ main h3 {border:1px solid black; text-align:center} /* 스페이스바 자손 셀렉터 */
+ form {border:1px solid black; padding:0.5em; }
+ label { border:1px solid black; display:inline-block; width:3em; text-align:right; margin-right:1em;} 
+ div:last-child { text-align:center; margin-top:0.5em }
+
+</style>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 	function login(){
@@ -45,7 +53,9 @@ if(cause!='')
 </script>
 </head>
 <body>
+
 <main>
+<h3>로그인</h3>
 	<form id="loginForm">
 		<input type="hidden" name="cmd" value="login">
 		<div><label for="id">아이디</label>

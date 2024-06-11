@@ -96,6 +96,36 @@ public class SessionService
 			request.setAttribute("list", list);
 			return "/jsp/cartItemList.jsp";
 		}
+		   else if(cmd.equals("itemChange"))
+		      {
+		         String itemName = request.getParameter("itemname");
+		         String sPrice = request.getParameter("price");
+		         String sQty = request.getParameter("qty");
+		         int price = Integer.parseInt(sPrice);
+		         int qty = Integer.parseInt(sQty);
+		         Item key = new Item(itemName, price);
+		         key.setQty(qty);
+		         
+		         Object objCart = request.getSession().getAttribute("cart");
+		         Cart cart = (Cart)objCart;
+		         boolean changed = cart.itemChange(key);
+		         sendJSON("changed", changed);
+		      }
+		   else if(cmd.equals("delItem"))
+		      {
+			   String itemName = request.getParameter("itemname");
+		         String sPrice = request.getParameter("price");
+		         int price = Integer.parseInt(sPrice);
+		         
+		         Item key = new Item(itemName, price);
+		         
+		         Object objCart = request.getSession().getAttribute("cart");
+		         Cart cart = (Cart)objCart;
+		         boolean deleted = cart.delItem(key);
+		         sendJSON("deleted", deleted);
+		      }
+
+		
 		return null;
 	}
 	

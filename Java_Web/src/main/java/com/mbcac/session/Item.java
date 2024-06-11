@@ -8,6 +8,9 @@ public class Item
 	private int qty = 1;
 	
 	public Item() {}
+	
+
+	
 	public Item(String gname, int price)
 	{
 		this.gname = gname;
@@ -17,7 +20,7 @@ public class Item
 	@Override
 	public boolean equals(Object obj) {
 		Item other = (Item)obj;
-		return this.gname.equals(other.gname) && this.price == other.price;  //비교의 기준 제시
+		return this.gname.equals(other.gname) && this.price == other.price;  //비교의 기준 제시 
 	}
 	public String getGname() {
 		return gname;
