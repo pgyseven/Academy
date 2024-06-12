@@ -48,6 +48,19 @@ public class Cart
 	
 	   return false;
    }
+
+public boolean delBatch(List<Item> delList) {
+	int deleted = 0;
+	for(int i=0;i<delList.size();i++) {
+		Item item = delList.get(i);
+		if(list.contains(item)) {
+			list.remove(item);
+			deleted++;
+		}
+	}
+		//5개를 삭제해 달라고 했으니 해당 갯수 만큼 삭제되야지 성공한거니 삭제된 개수와 리스트 개수가 같은지를 확인하여 트루 폴스 해야 맞다.
+	return deleted==delList.size();
+}
    
    
 }

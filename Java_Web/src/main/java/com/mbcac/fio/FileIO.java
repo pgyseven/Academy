@@ -9,12 +9,16 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mbcac.session.Item;
 import com.mbcac.vo.User;
+
 
 public class FileIO 
 {
    private static String filePath = "C:/Users/802-01/git/Academy/Academy/Java_Web/src/main/webapp/users.txt";
-
+   
+   private static String filePath2 = "C:/Users/802-01/git/Academy/Academy/Java_Web/src/main/webapp/orders.txt";
+   
    public boolean login(User user) {
       List<User> list = getList();
       boolean ok = list.contains(user);
@@ -114,6 +118,22 @@ public class FileIO
          return false;
       }
 
+public boolean addOrder(List<Item> list) {
+	 try {
+         
+         for(int i=0;i<list.size();i++) {
+        PrintWriter pw = new PrintWriter(new FileWriter(filePath2, true));
+         String line = String.format("%s %d %d", 
+            list.get(i).getGname() ,list.get(i).getPrice(), list.get(i).getQty());
+         pw.println(line);
+         pw.close();
+         }
+         return true;
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+      return false;
+   }
 
 
 }

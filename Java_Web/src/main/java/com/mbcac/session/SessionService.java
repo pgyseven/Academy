@@ -1,14 +1,17 @@
 package com.mbcac.session;
 
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
+import java.util.*;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.mbcac.fio.FileIO;
 import com.mbcac.vo.User;
-
+import org.json.simple.parser.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -111,8 +114,12 @@ public class SessionService
 		         boolean changed = cart.itemChange(key);
 		         sendJSON("changed", changed);
 		      }
-		   else if(cmd.equals("delItem"))
+		   else if(cmd.equals("delItem")) //자바에서 map가 비슷한 제이슨 오브젝트 원래 제이슨 자바에는 없지만 우리가 이전에 설치해서 쓸 수 있는것
 		      {
+					/*
+					 * parser 읽어들이면서 가공한다. 제이슨 문자열을 파스한다. 뭘로? JSONArray 제이슨 배열로! 바꾼다. 제이슨 오브젝트가 많이
+					 * 들어있는 배열인 것. 파서로 읽어 들였으니 제이슨 오브젝트로 바꾸고! jsArr 가공 절차가 족잡해 지니 리스트로 바꾼것!
+					 */ 
 			   String itemName = request.getParameter("itemname");
 		         String sPrice = request.getParameter("price");
 		         int price = Integer.parseInt(sPrice);
@@ -124,10 +131,68 @@ public class SessionService
 		         boolean deleted = cart.delItem(key);
 		         sendJSON("deleted", deleted);
 		      }
-
+		
+		      else if(cmd.equals("delBatch"))
+		      {
+		         String jsStr = request.getParameter("deljs");
+		         JSONParser jp = new JSONParser();
+		         try {
+		            JSONArray jsArr = (JSONArray)jp.parse(jsStr);
+		            List<Item> delList = new ArrayList<>();
+		            for(int i=0;i<jsArr.size();i++) {
+		               JSONObject jsobj = (JSONObject)jsArr.get(i);
+		               String itemname = (String)jsobj.get("itemname");
+		               String sPrice = (String)jsobj.get("price");
+		               int price = Integer.parseInt(sPrice);
+		               delList.add(new Item(itemname, price));
+		            }
+		            Cart cart = (Cart)request.getSession().getAttribute("cart");
+		            boolean deleted = cart.delBatch(delList);
+		            sendJSON("deleted", deleted);
+		         } catch (ParseException e) {
+		            e.printStackTrace();
+		         }
+		      }
+		
+		else if(cmd.equals("cartEmpty"))
+	      {
+	
+			Object objCart = request.getSession().getAttribute("cart");
+			Cart cart = (Cart)objCart;
+			List<Item> list = cart.getList();
+			list.clear();
+			request.setAttribute("total", cart.getTotal());
+			request.setAttribute("list", list);
+			return "/jsp/cartItemList.jsp";
+				
+	           
+	      }
+		else if(cmd.equals("order"))
+	      {
+	
+			Object objCart = request.getSession().getAttribute("cart");
+			Cart cart = (Cart)objCart;
+			List<Item> list = cart.getList();
+			
+			FileIO fio = new FileIO();
+		      boolean ordered = fio.addOrder(list);
+		      list.clear();
+		      sendJSON("ordered", ordered);
+		   
+		      
+			
+			
+			
+				
+	           
+	      }
 		
 		return null;
 	}
+	
+	
+	
+
 	
 	/** HttpSession에 로그인 성공한 이용자의 아이디를 저장한다. */
 	private void setIdInSession(String userID) //세션은 한번 만들어지면 사이트 활동을 안하는 경우 예를들어 피곤해서 자버리는 경우 그이후 30분이 지나면 세션 오브젝트가 서버에서 삭제된다.
