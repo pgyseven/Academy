@@ -9,14 +9,7 @@
 <head>
 <meta charset="UTF-8">
 <title>이용자 상세정보</title>
-<style type="text/css">
-   main{margin:0.5em auto; padding:1em; width:fit-content;}
-   main h3 { text-align:center;}
-   div#container{border:1px solid black;  width:fit-content; padding:0.5em;}
-   #container>div {border-bottom:1px solid black;}
-   label { display:inline-block; width:3em; padding:0.5em; text-align:right; 
-         border-right:1px solid black; background-color:#def;}
-</style>
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script type="text/javascript">
    function deleteUser() {
@@ -52,8 +45,8 @@
       <div><label>이메일</label> <%=u.getEmail()%></div>
    </div>
    <div>
-      [<a href="user?cmd=list">목록보기</a>]
-      [<a href="user?cmd=edit&no=<%=u.getNo()%>">수정</a>]
+      [<a href="emp?cmd=list">목록보기</a>]
+      [<a href="emp?cmd=edit&no=<%=u.getNo()%>">수정</a>]
       [<a href="javascript:deleteUser()">삭제</a>]
    </div>
 </main>
