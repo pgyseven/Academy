@@ -45,7 +45,7 @@
 <body>
 <main>
    <h3>정보변경</h3>
-   <div id="container">
+<container id = "">
    <form id = "editEmp">
    <input type="hidden" name="cmd" value="update">  <!-- hidden 사용자는 안보이지만 개발자에게 참고하라고 넘겨주는 정보 -->
 	<input type="hidden" name="empno" value="<%=eu.getEmpno()%>">

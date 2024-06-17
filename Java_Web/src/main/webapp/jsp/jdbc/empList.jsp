@@ -22,13 +22,15 @@
    for(int i=0;i<list.size();i++) {
       EmpVO emp = list.get(i); %>
       <div><%=emp.getEmpno()%>
-         <%=emp.getEname()%>
+         <a href = "jdbc?cmd=detail&empno=<%=emp.getEmpno()%>"><%=emp.getEname()%></a>
          <%=emp.getSal()%>
          <%=sdf.format(emp.getHiredate())%> 
          <%=emp.getDeptno()%>
       </div>
+      
 <%   }
 %>
+<div><a href = "jdbc?cmd=addForm">추가</a></div>
 </main>
 </body>
 </html>

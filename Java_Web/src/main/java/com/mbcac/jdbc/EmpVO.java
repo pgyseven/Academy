@@ -7,6 +7,9 @@ public class EmpVO {
 	private int sal;
 	private java.sql.Date hiredate;
 	private int deptno;
+	private String job;
+	private int mgr;
+	private float comm;
 	
 	public EmpVO() {
 		
@@ -56,6 +59,32 @@ public class EmpVO {
 	public void setDeptno(int deptno) {
 		this.deptno = deptno;
 	}
+
+	public String getJob() {
+		return job;
+	}
+
+	public void setJob(String job) {
+		this.job = job;
+	}
+
+	public int getMgr() {
+		return mgr;
+	}
+
+	public void setMgr(int mgr) {
+		this.mgr = mgr;
+	}
+
+	public float getComm() {
+		return comm;
+	}
+
+	public void setComm(float comm) {
+		this.comm = comm;
+	}
+
+
 	
 
 	
