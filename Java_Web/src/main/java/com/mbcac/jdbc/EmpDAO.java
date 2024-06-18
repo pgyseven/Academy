@@ -232,6 +232,7 @@ public class EmpDAO
 		 getConn();
 	      String sql = "INSERT INTO emp2 (empno, ename, hiredate, sal, deptno) VALUES(?,?,?,?,?) ";
 	      try {
+	    	  System.out.println(key.getHiredate());
 		         pstmt = conn.prepareStatement(sql);
 		         pstmt.setInt(1, key.getEmpno());
 		         pstmt.setString(2, key.getEname());

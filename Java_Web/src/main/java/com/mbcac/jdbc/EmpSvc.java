@@ -87,22 +87,26 @@ public class EmpSvc {
 			int empno = Integer.parseInt(request.getParameter("empno"));
 			String ename = request.getParameter("ename");
 			int sal = Integer.parseInt(request.getParameter("sal"));
-			
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date hiredate = null;
-			try {
-				hiredate = (Date) sdf.parse(request.getParameter("hiredate"));
-			} catch (ParseException e) {
-				
-				e.printStackTrace();
-			}
 			int deptno = Integer.parseInt(request.getParameter("deptno"));
+			
+			
+			
+			 String shire = request.getParameter("hiredate");
+			    System.out.println(shire);
+			    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			    java.sql.Date hiredate = null;
+			    try {
+			        hiredate = new java.sql.Date(sdf.parse(shire).getTime());
+			    } catch (ParseException e) {
+			        e.printStackTrace();
+			    }
 			
 			EmpVO key = new EmpVO();
 			key.setEmpno(empno);
 			key.setEname(ename);
 			key.setSal(sal);
 			key.setHiredate(hiredate);
+			key.setDeptno(deptno);
 			
 			EmpDAO dao = new EmpDAO(); 
 			

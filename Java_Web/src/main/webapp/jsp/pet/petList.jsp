@@ -1,11 +1,10 @@
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="com.mbcac.jdbc.EmpVO"%>
+<%@page import="com.mbcac.pet.petVO"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
 <%
-   List<EmpVO> list = (List<EmpVO>) request.getAttribute("list");
+   List<petVO> list = (List<petVO>) request.getAttribute("list");
 %>
 
 <!DOCTYPE html>
