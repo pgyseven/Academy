@@ -26,19 +26,19 @@ public class PetSvc {
 		System.out.println(cmd);
 		if (cmd.equals("addPet")) {
 			return "/jsp/pet/addPet.jsp";
-			
+
 		} else if (cmd.equals("save")) {
 			int no = Integer.parseInt(request.getParameter("no"));
-			String sName = request.getParameter("name");
+			String name = request.getParameter("name");
 			int year = Integer.parseInt(request.getParameter("year"));
 			int price = Integer.parseInt(request.getParameter("price"));
 			float weight = Integer.parseInt(request.getParameter("weight"));
-			
-			System.out.println("입력값 : "+no+sName+year+price+weight);
-			
+
+			System.out.println("입력값 : " + no + name + year + price + weight);
+
 			PetVO key = new PetVO();
 			key.setNo(no);
-			key.setsName(sName);
+			key.setName(name);
 			key.setYear(year);
 			key.setPrice(price);
 			key.setWeight(weight);
@@ -47,13 +47,33 @@ public class PetSvc {
 
 			boolean saved = pdao.save(key);
 			sendJSON("saved", saved);
-			
+
 		} else if (cmd.equals("list")) {
 			PetDAO pdao = new PetDAO();
 			List<PetVO> list = pdao.petList();
-			System.out.println(list.get(0).getNo());
-			sendJSON("list", list);
+			System.out.println(list.get(1).getNo());
+			System.out.println(list.get(1).getName());
+			request.setAttribute("list", list);
 			return "/jsp/pet/petList.jsp";
+			
+		} else if (cmd.equals("update")) {
+			int no = Integer.parseInt(request.getParameter("no"));
+			int price = Integer.parseInt(request.getParameter("price"));
+			System.out.println("숫자와 번호등: "+no+price);
+			boolean updated = new PetDAO().update(no,price);
+			System.out.println(updated);
+	
+			sendJSON("updated", updated);
+			
+		}else if (cmd.equals("delete")) {
+			int no = Integer.parseInt(request.getParameter("no"));
+			
+			System.out.println("숫자와 번호등: "+no);
+			boolean deleted = new PetDAO().delete(no);
+			System.out.println(deleted);
+	
+			sendJSON("deleted", deleted);
+			
 		}
 
 		return null;

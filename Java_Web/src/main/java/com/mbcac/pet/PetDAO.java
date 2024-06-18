@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class PetDAO {
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, key.getNo());
-			pstmt.setString(2, key.getsName());
+			pstmt.setString(2, key.getName());
 			pstmt.setInt(3, key.getYear());
 			pstmt.setInt(4, key.getPrice());
 			pstmt.setFloat(5, key.getWeight());
@@ -81,11 +82,11 @@ public class PetDAO {
 	             String name = rs.getString("NAME");
 	             int year = rs.getInt("YEAR");
 	             int price = rs.getInt("PRICE");
-	             int weight = rs.getInt("WEIGHT");
+	             float weight = rs.getInt("WEIGHT");
 	             
 	             PetVO pet = new PetVO();
 	             pet.setNo(no); 
-	             pet.setsName(name);
+	             pet.setName(name);
 	             pet.setYear(year);
 	             pet.setPrice(price);
 	             pet.setWeight(weight);
@@ -102,6 +103,48 @@ public class PetDAO {
 	       }
 		
 		return null;
+	}
+
+	public boolean update(int no, int price) {
+	System.out.println("숫자 : "+no+"price : " +price);
+		 getConn();
+	       String sql = "UPDATE pet SET price=? WHERE no=?"; 
+	    
+	       try {
+	          pstmt = conn.prepareStatement(sql);
+	          pstmt.setInt(1, price);
+	          pstmt.setInt(2, no);
+				int res = pstmt.executeUpdate();
+				System.out.println(res);
+				 return res>0;
+		         
+		      }catch(Exception ex) {
+		         ex.printStackTrace();
+		      }finally {
+		         closeAll();
+		      }
+			
+			return false;
+		}
+
+	public boolean delete(int no) {
+		 getConn();
+	      String sql = "DELETE FROM pet WHERE no=?";
+
+	      try {
+	         pstmt = conn.prepareStatement(sql);
+	         pstmt.setInt(1, no);
+	         int res = pstmt.executeUpdate(); 
+	         System.out.println(res);
+	         return res>0;
+	         
+	      }catch(Exception ex) {
+	         ex.printStackTrace();
+	      }finally {
+	         closeAll();
+	      }
+		
+		return false;
 	}
 
 }

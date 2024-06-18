@@ -3,16 +3,16 @@ package com.mbcac.pet;
 public class PetVO {
 	
 	private int no;
-	private String sName;
+	private String name;
 	private int year;
 	private int price;
 	private float weight;
 	
 	public PetVO() {}
 
-	public PetVO(int no, String sName, int year, int price, int weight) {
+	public PetVO(int no, String name, int year, int price, float weight) {
 		this.no = no;
-		this.sName = sName;
+		this.name = name;
 		this.year = year;
 		this.price = price;
 		this.weight = weight;
@@ -26,12 +26,12 @@ public class PetVO {
 		this.no = no;
 	}
 
-	public String getsName() {
-		return sName;
+	public String getName() {
+		return name;
 	}
 
-	public void setsName(String sName) {
-		this.sName = sName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public int getYear() {
@@ -54,8 +54,10 @@ public class PetVO {
 		return weight;
 	}
 
-	public void setWeight(float weight2) {
-		this.weight = weight2;
+	public void setWeight(float weight) {
+		this.weight = weight;
 	}
+
+
 	
 }
