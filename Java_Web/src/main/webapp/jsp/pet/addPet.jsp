@@ -13,7 +13,7 @@
    function savePet() {
       var petDate= $('#addPet').serialize();
       $.ajax({
-         url:'jdbc',
+         url:'pet',
          method:'post', 
          cache:false,
          data:petDate,
@@ -21,7 +21,7 @@
          success:function(res){
             alert(res.saved? '성공' : '실패'); 
             if(res.saved) 
-            	location.href="jdbc?cmd=list";
+            	location.href="pet?cmd=list";
           
          },
          error:function(xhr,status,err){

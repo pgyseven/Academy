@@ -26,13 +26,16 @@ public class PetSvc {
 		System.out.println(cmd);
 		if (cmd.equals("addPet")) {
 			return "/jsp/pet/addPet.jsp";
+			
 		} else if (cmd.equals("save")) {
 			int no = Integer.parseInt(request.getParameter("no"));
 			String sName = request.getParameter("name");
 			int year = Integer.parseInt(request.getParameter("year"));
 			int price = Integer.parseInt(request.getParameter("price"));
 			float weight = Integer.parseInt(request.getParameter("weight"));
-
+			
+			System.out.println("입력값 : "+no+sName+year+price+weight);
+			
 			PetVO key = new PetVO();
 			key.setNo(no);
 			key.setsName(sName);
@@ -40,13 +43,17 @@ public class PetSvc {
 			key.setPrice(price);
 			key.setWeight(weight);
 
-			PetDAO dao = new PetDAO();
+			PetDAO pdao = new PetDAO();
 
-			boolean saved = dao.save(key);
+			boolean saved = pdao.save(key);
 			sendJSON("saved", saved);
+			
 		} else if (cmd.equals("list")) {
 			PetDAO pdao = new PetDAO();
 			List<PetVO> list = pdao.petList();
+			System.out.println(list.get(0).getNo());
+			sendJSON("list", list);
+			return "/jsp/pet/petList.jsp";
 		}
 
 		return null;

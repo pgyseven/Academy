@@ -87,6 +87,7 @@ public class PetDAO {
 	             pet.setNo(no); 
 	             pet.setsName(name);
 	             pet.setYear(year);
+	             pet.setPrice(price);
 	             pet.setWeight(weight);
 	             
 	             
