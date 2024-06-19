@@ -32,7 +32,7 @@ public class PetSvc {
 			String name = request.getParameter("name");
 			int year = Integer.parseInt(request.getParameter("year"));
 			int price = Integer.parseInt(request.getParameter("price"));
-			float weight = Integer.parseInt(request.getParameter("weight"));
+			float weight = Float.parseFloat(request.getParameter("weight"));
 
 			System.out.println("입력값 : " + no + name + year + price + weight);
 
@@ -73,6 +73,29 @@ public class PetSvc {
 			System.out.println(deleted);
 	
 			sendJSON("deleted", deleted);
+			
+		}else if (cmd.equals("search")) {
+			String cat = request.getParameter("cat");
+			if(cat.equals("나이")){
+				int year = Integer.parseInt(request.getParameter("keyword"));
+				List<PetVO> list = new PetDAO().searchNo(year);
+				request.setAttribute("list", list);
+				return "/jsp/pet/searchPet.jsp";
+			}
+			else if(cat.equals("이름")) {
+				String name = request.getParameter("keyword");
+				List<PetVO> list = new PetDAO().searchName(name);
+				request.setAttribute("list", list);
+				return "/jsp/pet/searchPet.jsp";
+			}else if(cat.equals("가격")) {
+				int min = Integer.parseInt(request.getParameter("minPrice"));
+				int max = Integer.parseInt(request.getParameter("maxPrice"));
+				List<PetVO> list = new PetDAO().searchPrice(min,max);
+				request.setAttribute("list", list);
+				return "/jsp/pet/searchPet.jsp";
+			}
+			
+		
 			
 		}
 
