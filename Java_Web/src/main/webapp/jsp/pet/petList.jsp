@@ -81,13 +81,7 @@
        });
    });
    
-   <%
-	Object objCause = session.getAttribute("cause");
-	String cause = ""; //여기를 null 로 하면 loginFrom으로 들어갔을때 null 이라고 뜬다. ""으로 초기화 하는것과 null 이 다르다는 것 인지
-	if(objCause!=null)
-		cause = (String) objCause;
-	session.removeAttribute("cause");
-%>
+
    </script>
    <style type="text/css">
    table {background: linear-gradient(to right, #F6FFCC, #B7F0B1); border:1px solid black; border-collapse: collapse; border-spacing: 0;}  
