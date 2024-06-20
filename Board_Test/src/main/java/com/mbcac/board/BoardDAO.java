@@ -9,7 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class BoardDAO {
 
 	private Connection conn;
@@ -36,7 +35,7 @@ public class BoardDAO {
 		String sql = "INSERT INTO board VALUES(board_num_seq.NEXTVAL,?,?,?,?,?)";
 		try {
 			pstmt = conn.prepareStatement(sql);
-
+			System.out.println();
 			pstmt.setString(1, board.getTitle());
 			pstmt.setString(2, board.getAuthor());
 			pstmt.setDate(3, board.getrDate());
@@ -73,11 +72,12 @@ public class BoardDAO {
 				String contents = rs.getString("CONTENTS");
 				int hits = rs.getInt("HITS");
 				BoardVO board = new BoardVO();
-				board.setbNum(bNum);;
+				board.setbNum(bNum);
 				board.setTitle(title);
 				board.setAuthor(author);
 				board.setrDate(rDate);
 				board.setContents(contents);
+				board.setHits(hits);
 
 				list.add(board);
 			}
@@ -90,6 +90,112 @@ public class BoardDAO {
 		}
 
 		return null;
+	}
+
+	public BoardVO find(int bNum, String cmd) {
+		int hits = 0;
+		if (cmd.equals("detail")) {
+			hits = upHits(bNum);
+		} else if (cmd.equals("edit")) {
+			hits = checkHits(bNum);
+		}
+		System.out.println("업히트를 확인하는 메세지 : " + hits);
+		getConn();
+		BoardVO board = new BoardVO();
+		String sql = "SELECT * FROM board WHERE bnum=?";
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, bNum);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				int fingbNum = rs.getInt("BNUM");
+				String title = rs.getString("title");
+				String author = rs.getString("AUTHOR");
+				java.sql.Date rDate = rs.getDate("RDATE");
+				String contents = rs.getString("CONTENTS");
+
+				board.setbNum(fingbNum);
+				board.setTitle(title);
+				board.setAuthor(author);
+				board.setrDate(rDate);
+				board.setContents(contents);
+				board.setHits(hits);
+
+				return board;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			closeAll();
+		}
+
+		return null;
+	}
+
+	private int upHits(int bNum) {
+		int hits = checkHits(bNum);
+		int upHits = ++hits;
+		getConn();
+		String sql = "UPDATE board SET hits=? WHERE bnum=?";
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, hits);
+			pstmt.setInt(2, bNum);
+			int res = pstmt.executeUpdate();
+			if (res > 0) {
+				return upHits;
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			closeAll();
+		}
+		return 0;
+
+	}
+
+	private int checkHits(int bNum) {
+		getConn();
+		String sql = "SELECT * FROM board WHERE bnum=?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, bNum);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				int hits = rs.getInt("hits");
+				return hits;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			closeAll();
+		}
+		return 0;
+
+	}
+	
+	public boolean saveEdit(BoardVO board) {
+		getConn();
+		String sql = "UPDATE board SET title=?, contents=?  WHERE bnum=?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, board.getTitle());
+			pstmt.setString(2, board.getContents());
+			pstmt.setInt(3, board.getbNum());
+			int res = pstmt.executeUpdate();
+
+			return res > 0;
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			closeAll();
+		}
+
+		return false;
 	}
 
 	private void closeAll() {

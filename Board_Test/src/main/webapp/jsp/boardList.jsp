@@ -47,7 +47,7 @@
         %>
         <tr>
             <td><%=bNum%></td>
-            <td><%=title%></td>
+            <td><a href="board?cmd=detail&bnum=<%=board.getbNum()%>"><%=title%></a></td>
             <td><%=author%></td>
             <td><%=rDate%></td>
             <td><%=hits%></td>

@@ -29,14 +29,36 @@ public class BoardSvc {
 		} else if (cmd.equals("save")) {
 			BoardVO board = getParam();
 			System.out.println(board.getrDate());
-			BoardDAO bio = new BoardDAO();
-			boolean saved = bio.save(board);
+			boolean saved = new BoardDAO().save(board);
 			sendJSON("saved", saved);
-			
+
 		} else if (cmd.equals("list")) {
 			List<BoardVO> list = new BoardDAO().list();
 			request.setAttribute("list", list);
-			return "/jsp/boardList.jsp"; 
+			return "/jsp/boardList.jsp";
+
+		} else if (cmd.equals("detail") || cmd.equals("edit")) {
+			int bNum = Integer.parseInt(request.getParameter("bnum"));
+			System.out.println("비넘 확인 메세지 : " + bNum);
+			BoardVO board = new BoardDAO().find(bNum, cmd);
+			if (cmd.equals("edit")) {
+				request.setAttribute("board", board);
+				return "/jsp/boardEdit.jsp";
+			}
+			request.setAttribute("board", board);
+			return "/jsp/boardDetail.jsp";
+
+		} else if (cmd.equals("saveEdit")) {
+			int bNum = Integer.parseInt(request.getParameter("bnum"));
+			String title = request.getParameter("title");
+			String contents = request.getParameter("contents");
+			BoardVO board = new BoardVO();
+			board.setbNum(bNum);
+			board.setTitle(title);
+			board.setContents(contents);
+			boolean saved = new BoardDAO().saveEdit(board);
+			sendJSON("saved", saved);
+
 		}
 
 		return null;
