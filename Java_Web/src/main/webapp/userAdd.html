@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>사용자 정보 추가</title>
+<style type="text/css">
+   main { width:fit-content; margin:0.5em auto; }
+   form label {display:inline-block; width:4em; padding:0.3em; text-align:right;}
+   div#btn { text-align:center; margin:0.5em; }
+   form { padding:1em; border:1px solid black;}
+</style>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+   function saveUser() {
+      var serData = $('#addForm').serialize(); 
+      $.ajax({
+         url:'../user',
+         method:'post', //<!-- 요청 방식은 겟과 포스트가 있는데, 마우스 클릭 링크 클릭 하는건 겟방식을 쓰는 편이고 대부분 폼은 포스트를 쓴다.서버로 전송 할 수 있게 양식을 맞춤 액션 속성과 메소드 속성은 폼에만 있다 즉 폼이 있어야 제출할 수 있다. -->
+         cache:false,
+         data:serData,
+         dataType:'json',
+         success:function(res){
+            alert(res.added?'이용자 정보 저장 성공': '저장 실패');
+         },
+         error:function(xhr,status,err){
+            alert('에러:' + err);
+         }
+      });
+   }
+</script>
+</head>
+<body>
+<main>
+   <div id="container">
+   <h1>사용자 정보 추가 폼</h1>
+   <form id="addForm">
+      <input type="hidden" name="cmd" value="add">
+      <div><label for="no">번호</label><input type="text" name="no" id="no"></div>
+      <div><label for="id">아이디</label><input type="text" name="id" id="id"></div>
+      <div><label for="pwd">암호</label><input type="text" name="pwd" id="pwd"></div>
+      <div><label for="phone">전화</label><input type="text" name="phone" id="phone"></div>
+      <div><label for="email">Email</label><input type="text" name="email" id="email"></div>
+      <div id="btn"><button type="reset">취소</button>
+         <button type="button" onclick="saveUser();">저장</button>
+      </div>
+   </form>
+   </div>
+</main>
+</body>
+</html>
