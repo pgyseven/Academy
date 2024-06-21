@@ -37,11 +37,11 @@ public class BoardSvc {
 			request.setAttribute("list", list);
 			return "/jsp/boardList.jsp";
 
-		} else if (cmd.equals("detail") || cmd.equals("edit")) {
+		} else if (cmd.equals("findDetail") || cmd.equals("findEdit")) {
 			int bNum = Integer.parseInt(request.getParameter("bnum"));
 			System.out.println("비넘 확인 메세지 : " + bNum);
 			BoardVO board = new BoardDAO().find(bNum, cmd);
-			if (cmd.equals("edit")) {
+			if (cmd.equals("findEdit")) {
 				request.setAttribute("board", board);
 				return "/jsp/boardEdit.jsp";
 			}
@@ -58,36 +58,33 @@ public class BoardSvc {
 			board.setContents(contents);
 			boolean saved = new BoardDAO().saveEdit(board);
 			sendJSON("saved", saved);
-
 		}
 
 		return null;
-
 	}
 
 	private BoardVO getParam() {
 		String title = request.getParameter("title");
 		String author = request.getParameter("author");
-		java.util.Date regUtilDate = new java.util.Date();
-		System.out.println("날짜 확인하기 입니다." + regUtilDate.toString());
-		/* SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); */
+		/*
+		 * java.util.Date regUtilDate = new java.util.Date();
+		 * System.out.println("날짜 확인용 메세지 : " + regUtilDate.toString());
+		 */
+		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
 
-		java.sql.Date rDate = null;
-		try {
-			/* rDate = new java.sql.Date(sdf.parse(sdf.format(regUtilDate)).getTime()); */
-			rDate = new java.sql.Date(regUtilDate.getTime());
-			/* System.out.println(sdf.format(regUtilDate)); */
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		/*
+		 * java.sql.Date rDate = null; try { //rDate = new
+		 * java.sql.Date(sdf.parse(sdf.format(regUtilDate)).getTime()); rDate = new
+		 * java.sql.Date(regUtilDate.getTime()); System.out.println("변경된 날짜 확인용 메세지 : "
+		 * + rDate); } catch (Exception e) { e.printStackTrace(); }
+		 */
 		String contents = request.getParameter("contents");
 		int hits = 0;
 
 		BoardVO board = new BoardVO();
 		board.setTitle(title);
 		board.setAuthor(author);
-		board.setContents(contents);
-		board.setrDate(rDate);
+		// board.setrDate(rDate);
 		board.setContents(contents);
 		board.setHits(hits);
 

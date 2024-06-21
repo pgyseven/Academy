@@ -5,17 +5,64 @@
 <head>
 <meta charset="UTF-8">
 <title>게시글 쓰기</title>
-<!-- <style type="text/css">
-   main { width:fit-content; margin:0 auto; }
-   main h3{width:fit-content; margin:0.5em auto; }
-   label {display:inline-block; width:3em; margin:0.3em 0.5em; text-align:right;}
-   form { border:1px solid black; padding:1em;}
-   form div:last-child {width:fit-content; margin:0.3em auto; }
-   input { width:20em;}
-   textarea {width:20em; height:7em;margin-top:0.6em;}
-   label[for=contents] {display:inline-block; position:relative; top:-3em;}
-</style> -->
+<style>
+body {
+	background-color: #212121;
+}
 
+* {
+	color: #F6F6F6;
+}
+
+main {
+	background-color: #3D4045;
+	border: 1px solid #F6F6F6;
+	width: fit-content;
+	margin: 3em auto;
+	border-collapse: collapse;
+	text-align: center;
+	padding:1em;
+}
+
+button {
+	background: linear-gradient(#FAF4C0, #CEFBC9);
+	border-radius: 8px;
+	border: none;
+	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+	cursor: pointer;
+	color: #353535;
+}
+
+main h3 {
+	border: 1px solid black;
+	text-align: center
+} /* 스페이스바 자손 셀렉터 */
+label {
+	display: inline-block;
+	width: 3em;
+	text-align: left;
+	margin-right: 5em;
+}
+
+div:last-child {
+	text-align: center;
+	margin-top: 0.5em
+}
+
+textarea {
+	width: 10em;
+	height: 7em;
+	margin-top: 0.6em;
+	background-color: #86E57F;
+}
+
+body {
+	background-color: #212121;
+	background-image: url('/Board_Test/images/mel.jpg');
+	background-repeat: repeat;
+	background-size: 500px;
+}
+</style>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"
 	integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
 	crossorigin="anonymous"></script>
@@ -23,14 +70,15 @@
 	function save() {
 		var serForm = $('#inputForm').serialize();
 		$.ajax({
-			url:'board',
-			method:'post',
-			cache:false,
-			data:serForm,
-			dataType:'json',
-			success:function(res) {
+			url : 'board',
+			method : 'post',
+			cache : false,
+			data : serForm,
+			dataType : 'json',
+			success : function(res) {
 				alert(res.saved ? '게시글 저장 성공' : '게시글 저장 실패');
-				if (res.saved) location.href='board?cmd=list';
+				if (res.saved)
+					location.href = 'board?cmd=list';
 			},
 			error : function(xhr, status, err) {
 				alert('에러:' + err);
@@ -45,10 +93,12 @@
 		<form id="inputForm">
 			<input type="hidden" name="cmd" value="save">
 			<div>
-				<label for="title">제목</label> <input type="text" name="title" value="제목">
+				<label for="title">제목</label> <input type="text" name="title"
+					value="제목" style="width: 10em; background-color: #86E57F;">
 			</div>
 			<div>
-				<label for="author">작성자</label> <input type="text" name="author" value="작성자">
+				<label for="author">작성자</label> <input type="text" name="author"
+					value="작성자" style="width: 10em; background-color: #86E57F;">
 			</div>
 			<div>
 				<label for="contents">내용</label>
@@ -57,6 +107,8 @@
 			<div>
 				<button type="reset">취소</button>
 				<button type="button" onclick="save()">저장</button>
+				<button type="button" onclick="location.href='board?cmd=list'">목록</button>
+
 			</div>
 		</form>
 	</main>
