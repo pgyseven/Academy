@@ -60,17 +60,7 @@ body {
 	background-repeat: repeat;
 	background-size: 500px;
 }
-/* div#train {
-    background-image: url('/Board_Test/images/sky.gif');
-    background-size: cover; /* 이미지 크기 조정 */
-    /* background-repeat: no-repeat; */
-    width: 100%; /* 가득 채우기 */
-    height: 100%; /* 원하는 높이 설정 */
-    position: absolute; /* 절대 위치 설정 */
-    top: 0; /* 상단에 배치 */
-    left: 0; /* 좌측에 배치 */
-    z-index: -1; /* 배경 이미지를 main 요소 뒤로 보냄 */
-} */
+
 </style>
 </head>
 <body>
