@@ -203,6 +203,29 @@ public class EmpDAO
 		return false;
 	}
 	
+	public boolean update(EmpVO key) {//이건 내가 짜둔거에서는 사용 안하지만 내꺼에서 save update 이런식으로 하면 안되는건 객체형태로 받아야하는데 따로 받기 때문이다.
+	      getConn();
+	      
+	      String sql = "UPDATE emp2 SET deptno=?,sal=? WHERE empno=?";
+	      int res = 0;
+	      try 
+	      {
+	      pstmt = conn.prepareStatement(sql);
+	      pstmt.setInt(1, key.getDeptno());
+	      pstmt.setInt(2, key.getSal());
+	      pstmt.setInt(3, key.getEmpno());
+	      res = pstmt.executeUpdate();
+	      
+	      System.out.println("res : "+res);
+	      
+	      return res>0;
+	      
+	      } 
+	      catch (Exception e) {e.printStackTrace();}
+	      finally {closeAll();}
+	      return false;
+	   }
+	
 	public boolean delete(int empno) {
 		
 		

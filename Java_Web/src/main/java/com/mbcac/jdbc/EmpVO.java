@@ -1,5 +1,8 @@
 package com.mbcac.jdbc;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 public class EmpVO {
 
 	private int empno;
@@ -47,7 +50,15 @@ public class EmpVO {
 	public java.sql.Date getHiredate() {
 		return hiredate;
 	}
-
+	public void setHiredate(String hiredate) // method Overroad
+	   {
+	      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	      try 
+	      {
+	         this.hiredate = new java.sql.Date(sdf.parse(hiredate).getTime());
+	      } 
+	      catch (ParseException e) {e.printStackTrace();}
+	   }
 	public void setHiredate(java.sql.Date hiredate) {
 		this.hiredate = hiredate;
 	}
