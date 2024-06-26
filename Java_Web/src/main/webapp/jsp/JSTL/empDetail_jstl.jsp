@@ -30,7 +30,7 @@
          method:'post',
          cache:false,
          data:param,
-         dataType:'text',
+         dataType:'text', //이걸 json으로 바꿔두됨 그럼 아래서 제이슨 parse 가 아니라 res.deleted 로 하면됨
          success:function(res)
          {
            var deleted = JSON.parse(res).deleted; /* 제이슨으로 받으면 공백때문에 오류나니 텍스트로 받은거 */
