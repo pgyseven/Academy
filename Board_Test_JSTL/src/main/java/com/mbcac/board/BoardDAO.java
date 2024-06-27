@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
+
 public class BoardDAO {
 
 	private Connection conn;
@@ -132,7 +134,59 @@ public class BoardDAO {
 
 		return false;
 	}
+	   public Pagination getList(int page)
+	   {
+	      getConn();
+	      String sql = "SELECT * FROM "
+	               + "("
+	               + "    SELECT t2.*,  FLOOR((RN-1)/3+1) page FROM "
+	               + "    ("
+	               + "        SELECT t1.*, ROWNUM RN FROM "
+	               + "        ( "
+	               + "            SELECT * FROM board CROSS JOIN  (SELECT CEIL(COUNT(*)/3) ttlpages FROM board) ORDER BY bnum"
+	               + "        )t1 "
+	               + "    )t2 "
+	               + ") "
+	               + "WHERE page=?";
 
+	      List<BoardVO> list = new ArrayList<>();
+	      try {
+	         pstmt = conn.prepareStatement(sql);
+	         pstmt.setInt(1, page);
+	         rs = pstmt.executeQuery();
+	         int ttlPages = 0;
+	         while(rs.next())
+	         {
+	            int bnum = rs.getInt("BNUM");
+	            String title = rs.getString("TITLE");
+	            String author = rs.getString("AUTHOR");
+	            java.sql.Date rdate = rs.getDate("RDATE");
+	            String contents = rs.getString("CONTENTS");
+	            int hits = rs.getInt("HITS");
+	            ttlPages = rs.getInt("TTLPAGES");
+
+	            BoardVO board = new BoardVO();
+	            board.setbNum(bnum);
+	            board.setTitle(title);
+	            board.setAuthor(author);
+	            board.setrDate(rdate);
+	            board.setContents(contents);
+	            board.setHits(hits);
+	            list.add(board);
+	         }
+	         
+	         //int currentPage, int itemsPerPage, int totalItems
+	         Pagination<BoardVO> pagination = new Pagination(page, 3, ttlPages);
+	         pagination.setItems(list);
+	         return pagination;
+	      }catch(Exception ex) {
+	         ex.printStackTrace();
+	      }finally {
+	         closeAll();
+	      }
+	      return null;
+	   }
+	   
 	public List<BoardVO> list() {
 		getConn();
 		String sql = "SELECT * FROM board ORDER BY bnum";

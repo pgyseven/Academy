@@ -5,6 +5,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> 
 <jsp:useBean id="dao" class="com.mbcac.board.BoardDAO" /> 
+<c:set var = "pg" value="${dao.getList(param.page)}"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -56,6 +57,8 @@ body {
 	background-repeat: repeat;
 	background-size: 500px;
 }
+button.cp { background-color:#dfd; }
+
 
 </style>
 </head>
@@ -71,7 +74,7 @@ body {
 				<th>작성일</th>
 				<th>Hits</th>
 			</tr>
-			<c:forEach var="list" items="${dao.list()}">
+			<c:forEach var="list" items="${pg.items}">
 			<tr>
 				<td>${list.bNum}</td>
 				<td><a href="boardDetail.jsp?bnum=${list.bNum}&cmd=findDetail">${list.title}</a></td>
@@ -81,11 +84,27 @@ body {
 			</tr>
 			</c:forEach>
 		</table>
+		  <p>
+   <nav>
+      <c:forEach var="p" items="${pg.getPageNums()}">
+         <a href="boardList.jsp?page=${p}">
+            <c:choose>
+               <c:when test="${p==pg.currentPage}">
+                    <button class="cp">${p}</button>
+                </c:when>
+                <c:otherwise>
+                    <button>${p}</button>
+                </c:otherwise>
+            </c:choose>
+         </a>
+      </c:forEach>
+   </nav>
+				<p> 
 		<button type="button" onclick="location.href='boardInput.jsp'">새
 			글 작성</button>
 		<!-- <a href="board?cmd=boardInput"><button type="button"></button></a> -->
-		<p> 
 
+		<p>
 		<form action="boardSearch_Servlet.jsp" method="post">
 		<input type="hidden" name="cmd" value="search">
 			<div><label>검색 카테고리</label>
@@ -100,7 +119,7 @@ body {
 		</form>
 		
 	</div>
-<p>
-	</main>
+
+    </main>
 </body>
 </html>
