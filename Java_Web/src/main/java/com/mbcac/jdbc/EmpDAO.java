@@ -91,9 +91,13 @@ public class EmpDAO
 
 	public List<EmpVO> getList() {
 		 getConn();
-	       String sql = "SELECT * FROM emp2"; 
-	      
-	       List<EmpVO> list = new ArrayList<>();
+			/* String sql = "SELECT * FROM emp2"; */
+	      //20240628 계층구조를 위해 추가
+		
+		 		String sql = "SELECT empno, hiredate, sal, deptno, LPAD('　　',(LEVEL-1)*3,'　　')|| ename AS ename FROM emp START WITH mgr IS NULL CONNECT BY PRIOR empno=mgr"; 
+		 	
+		 		
+		 		List<EmpVO> list = new ArrayList<>();
 	       try {
 	    	   
 	          

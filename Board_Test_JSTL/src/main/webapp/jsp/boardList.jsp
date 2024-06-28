@@ -86,6 +86,10 @@ button.cp { background-color:#dfd; }
 		</table>
 		  <p>
    <nav>
+     <!-- 이전 페이지 버튼 -->
+    <a href="boardList.jsp?page=${pg.getPreviousPage()}">
+        <button>&lt;</button>
+    </a>
       <c:forEach var="p" items="${pg.getPageNums()}">
          <a href="boardList.jsp?page=${p}">
             <c:choose>
@@ -98,6 +102,10 @@ button.cp { background-color:#dfd; }
             </c:choose>
          </a>
       </c:forEach>
+       <!-- 다음 페이지 버튼 -->
+    <a href="boardList.jsp?page=${pg.getNextPage()}">
+        <button>&gt;</button>
+    </a>
    </nav>
 				<p> 
 		<button type="button" onclick="location.href='boardInput.jsp'">새

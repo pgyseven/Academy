@@ -5,6 +5,12 @@ import java.text.SimpleDateFormat;
 
 public class EmpVO {
 
+	@Override
+	public String toString() {
+		return "EmpVO [empno=" + empno + ", ename=" + ename + ", sal=" + sal + ", hiredate=" + hiredate + ", deptno="
+				+ deptno + ", job=" + job + ", mgr=" + mgr + ", comm=" + comm + "]";
+	}
+
 	private int empno;
 	private String ename;
 	private int sal;

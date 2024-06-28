@@ -42,6 +42,7 @@ public class EmpSvc {
 			EmpDAO dao = new EmpDAO(); 
 			List<EmpVO> list = dao.getList();
 			request.setAttribute("list", list);
+			System.out.println(list);
 			return "/jsp/jdbc/empList.jsp";
 		}
 		
