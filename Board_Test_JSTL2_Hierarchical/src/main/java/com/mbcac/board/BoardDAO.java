@@ -2,209 +2,121 @@ package com.mbcac.board;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.Types;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-
-
-
-
-
-public class BoardDAO {
-
+public class BoardDAO 
+{
 	private Connection conn;
 	private PreparedStatement pstmt;
-	private Statement stmt;
 	private ResultSet rs;
 
-	private Connection getConn() {
+	private Connection getConn()
+	{
 		try {
-			Class.forName("oracle.jdbc.OracleDriver");
-
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SCOTT", "TIGER");
-
+			Class.forName("oracle.jdbc.OracleDriver");  //ojdbc11.jar 
+			conn = DriverManager.getConnection(
+	                "jdbc:oracle:thin:@localhost:1521:xe", "SCOTT", "TIGER");
 			return conn;
 		} catch (Exception e) {
-
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	
-	
-	
-	/*
-	 * public int save2(BoardVO board) { getConn(); String sql =
-	 * "INSERT INTO board VALUES(board_num_seq.NEXTVAL,?,?,SYSDATE,?,?) RETURNING bnum INTO ?"
-	 * ; try { pstmt = conn.prepareStatement(sql); pstmt.setString(1,
-	 * board.getTitle()); pstmt.setString(2, board.getAuthor()); pstmt.setString(3,
-	 * board.getContents()); pstmt.setInt(4, board.getHits());
-	 * 
-	 * // executeUpdate()를 호출하여 INSERT 문을 실행 int res = pstmt.executeUpdate(); int
-	 * generatedBNum = 0; // INSERT 문 실행 후 ResultSet을 통해 생성된 값(bnum)을 가져옴 ResultSet
-	 * rs = pstmt.getGeneratedKeys(); if (rs.next()) { generatedBNum = rs.getInt(1);
-	 * // 첫 번째 컬럼의 값을 가져옴 //board.setbNum(generatedBNum); // 생성된 값을 BoardVO 객체에 설정 }
-	 * 
-	 * return new Object[] { res > 0, generatedBNum };
-	 * 
-	 * } catch (Exception ex) { ex.printStackTrace(); } finally { closeAll(); }
-	 * 
-	 * return null; }
-	 */
-	
-	public int saveTwo(BoardVO board) {
+	//board(num, title, author, contents, rdate, parent)
+	public List<BoardVO> getHierarchicalList()
+	{
 		getConn();
-		
-		String sql = "INSERT INTO board2(bnum,title, author, rdate, contents, hits) VALUES(board2_num_seq.NEXTVAL,?,?,SYSDATE,?,?) RETURNING bnum INTO ?";
-		try {
+		String sql = "SELECT bnum, LPAD('└Re:', (LEVEL-1)*3,  '　') || title AS title, "
+				   + "author, rdate "
+				   + "FROM board2 "
+				   + "START WITH parent=0 "
+				   + "CONNECT BY PRIOR bnum=parent";
 
-	        CallableStatement cstmt = conn.prepareCall("{call " + sql +"}"); //plsql 언어를 표현하는 형식 보통 sql 프로그램 실행때 사용 ex plsql 오라클에서 호출시
-
-			cstmt.setString(1, board.getTitle());
-			cstmt.setString(2, board.getAuthor());
-			cstmt.setString(3, board.getContents());
-			cstmt.setInt(4, board.getHits());
-	        cstmt.registerOutParameter(5, Types.INTEGER);
-	        
-	        int res = cstmt.executeUpdate();
-	        int newbNum = cstmt.getInt(5);
-
-	        System.out.println("비넘의 숫자를 확인하세요!!!!!!!!!!"+newbNum);
-			return res>0 ? newbNum : 0;
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			closeAll();
-		}
-
-		return 0;
-	}
-
-	public boolean save(BoardVO board) {
-		getConn();
-		//String sql = "INSERT INTO board VALUES(board_num_seq.NEXTVAL,?,?,?,?,?)";
-		String sql = "INSERT INTO board VALUES(board_num_seq.NEXTVAL,?,?,SYSDATE,?,?)";
-		/* VALUES(board_seq.NEXTVAL, SYSDATE, ?, ?, ?) */
+		List<BoardVO> list = new ArrayList<>();
 		try {
 			pstmt = conn.prepareStatement(sql);
-			System.out.println();
-			pstmt.setString(1, board.getTitle());
-			pstmt.setString(2, board.getAuthor());
-			//pstmt.setDate(3, board.getrDate());
-			pstmt.setString(3, board.getContents());
-			pstmt.setInt(4, board.getHits());
-			int res = pstmt.executeUpdate();
-			System.out.println(sql);
 
-			return res > 0;
+			rs = pstmt.executeQuery();
+			int ttlPages = 0;
+			while(rs.next())
+			{
+				int bnum = rs.getInt("BNUM");
+				String title = rs.getString("TITLE");
+				String author = rs.getString("AUTHOR");
+				java.sql.Date rdate = rs.getDate("RDATE");
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			closeAll();
-		}
+				BoardVO board = new BoardVO();
+				board.setBnum(bnum);
+				board.setTitle(title);
+				board.setAuthor(author);
+				board.setRdate(rdate);
 
-		return false;
-	}
-	
-	public boolean replySave(BoardVO board) {
-		getConn();
-		System.out.println(board);
-		String sql = "INSERT INTO board2(bnum, contents, parent)VALUES(board_num_seq.NEXTVAL,?,?)";
-		try {
-			pstmt = conn.prepareStatement(sql);
-			
-			pstmt.setString(1, board.getContents());
-			pstmt.setInt(2, board.getbNum());
-			int res = pstmt.executeUpdate();
-			System.out.println(sql);
-
-			return res > 0;
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			closeAll();
-		}
-
-		return false;
-	}
-	public boolean saveEdit(BoardVO board) {
-		System.out.println("진입확인 메세지 입니다!!!!!!!!!!!!!!!!!"+board.getTitle()+board.getContents()+board.getbNum());
-		getConn();
-		String sql = "UPDATE board SET title=?, contents=?  WHERE bnum=?";
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, board.getTitle());
-			pstmt.setString(2, board.getContents());
-			pstmt.setInt(3, board.getbNum());
-			int res = pstmt.executeUpdate();
-
-			return res > 0;
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			closeAll();
-		}
-
-		return false;
-	}
-	public List<BoardVO> hierarchicalList() {
-		 getConn();
-		 		String sql = "SELECT bnum, LPAD('　　',(LEVEL-1)*3,'　　')|| contents AS contents FROM board2 START WITH parent IS 0 CONNECT BY PRIOR bnum=parent"; 
-		 	
-				List<BoardVO> list = new ArrayList<>();
-				try {
-					pstmt = conn.prepareStatement(sql);
-					rs = pstmt.executeQuery();
-					while (rs.next()) {
-						int bNum = rs.getInt("BNUM");
-						System.out.println(bNum);
-						String title = rs.getString("TITLE");
-						String author = rs.getString("AUTHOR");
-						java.sql.Date rDate = rs.getDate("RDATE");
-						String contents = rs.getString("CONTENTS");
-						int hits = rs.getInt("HITS");
-						BoardVO board = new BoardVO();
-						board.setbNum(bNum);
-						board.setTitle(title);
-						board.setAuthor(author);
-						board.setrDate(rDate);
-						board.setContents(contents);
-						board.setHits(hits);
-
-						list.add(board);
-					}
-
-					return list;
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				} finally {
-					closeAll();
-				}
-
-				return null;
+				list.add(board);
 			}
+
+			return list;
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}finally {
+			closeAll();
+		}
+		return null;
+	}
 	
-	   public Pagination getList(int page)
+	   public int add(BoardVO board) {//board(num, title, author, contents, rdate, parent)
+		      getConn();
+		      String sql = "INSERT INTO board2(bnum,title,author,contents,rdate,parent) " +
+		                     "VALUES(board2_num_seq.NEXTVAL,?,?,?,SYSDATE,?) " +
+		                     "RETURNING bnum INTO ?";
+
+		      try {
+		         CallableStatement cstmt = conn.prepareCall("{call "+ sql +"}");
+		         cstmt.setString(1, board.getTitle());
+		         cstmt.setString(2, board.getAuthor());
+		         cstmt.setString(3, board.getContents());
+		         cstmt.setInt(4, board.getParent());
+		         cstmt.registerOutParameter(5, Types.INTEGER);
+		         int rows = cstmt.executeUpdate();
+		         int newId = cstmt.getInt(5);
+
+		         cstmt.close();
+		         return rows>0 ? newId : 0;
+		      }catch(Exception ex) {
+		         ex.printStackTrace();
+		      }finally {
+		         closeAll();
+		      }
+		      return 0;
+		   }
+	
+	   
+	   public Pagination<BoardVO> getHierarchicalList(int page, int IPP)
 	   {
 	      getConn();
-	      String sql = "SELECT * FROM "
+	      String sql2 = "SELECT * FROM "
 	               + "("
-	               + "    SELECT t2.*,  FLOOR((RN-1)/3+1) page FROM "
+	               + "    SELECT t2.*,  FLOOR((RN-1)/"+ IPP +"+1) page FROM "
 	               + "    ("
 	               + "        SELECT t1.*, ROWNUM RN FROM "
 	               + "        ( "
-	               + "            SELECT * FROM board CROSS JOIN  (SELECT CEIL(COUNT(*)/3) ttlpages FROM board) ORDER BY bnum"
+	               + "           SELECT * FROM "
+	               + "           ( "
+	               + "              SELECT bnum, LPAD('└Re:', (LEVEL-1)*4,  '　') || title AS title, "
+	               + "              author, rdate, parent, ttlpages FROM "
+	               + "            ( "
+	               + "                  SELECT * FROM board2 "
+	               + "               CROSS JOIN  (SELECT CEIL(COUNT(*)/"+ IPP +") ttlpages FROM board2) "
+	               + "               ORDER BY rdate DESC"
+	               + "            ) "
+	               + "              START WITH parent=0 CONNECT BY PRIOR bnum=parent "
+	               + "           ) "
 	               + "        )t1 "
 	               + "    )t2 "
 	               + ") "
@@ -212,7 +124,7 @@ public class BoardDAO {
 
 	      List<BoardVO> list = new ArrayList<>();
 	      try {
-	         pstmt = conn.prepareStatement(sql);
+	         pstmt = conn.prepareStatement(sql2);
 	         pstmt.setInt(1, page);
 	         rs = pstmt.executeQuery();
 	         int ttlPages = 0;
@@ -222,22 +134,18 @@ public class BoardDAO {
 	            String title = rs.getString("TITLE");
 	            String author = rs.getString("AUTHOR");
 	            java.sql.Date rdate = rs.getDate("RDATE");
-	            String contents = rs.getString("CONTENTS");
-	            int hits = rs.getInt("HITS");
 	            ttlPages = rs.getInt("TTLPAGES");
-
+	            
 	            BoardVO board = new BoardVO();
-	            board.setbNum(bnum);
+	            board.setBnum(bnum);
 	            board.setTitle(title);
 	            board.setAuthor(author);
-	            board.setrDate(rdate);
-	            board.setContents(contents);
-	            board.setHits(hits);
+	            board.setRdate(rdate);
+
 	            list.add(board);
 	         }
-	         
-	         //int currentPage, int itemsPerPage, int totalItems
-	         Pagination<BoardVO> pagination = new Pagination(page, 3, ttlPages);
+
+	         Pagination<BoardVO> pagination = new Pagination(page, IPP, ttlPages);
 	         pagination.setItems(list);
 	         return pagination;
 	      }catch(Exception ex) {
@@ -246,240 +154,173 @@ public class BoardDAO {
 	         closeAll();
 	      }
 	      return null;
-	   }
+	   } 
 	   
-	public List<BoardVO> list() {
+	 
+	public Pagination getList(int page)
+	{
+		System.out.println(page);
 		getConn();
-		String sql = "SELECT * FROM board ORDER BY bnum";
+		String sql = "SELECT * FROM "
+				   + "("
+				   + "    SELECT t2.*,  FLOOR((RN-1)/3+1) page FROM "
+				   + "    ("
+				   + "        SELECT t1.*, ROWNUM RN FROM "
+				   + "        ( "
+				   + "            SELECT * FROM board2 CROSS JOIN  (SELECT CEIL(COUNT(*)/3) ttlpages FROM board2) ORDER BY bnum"
+				   + "        )t1 "
+				   + "    )t2 "
+				   + ") "
+				   + "WHERE page=?";
 
 		List<BoardVO> list = new ArrayList<>();
 		try {
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, page);
 			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				int bNum = rs.getInt("BNUM");
-				System.out.println(bNum);
+			int ttlPages = 0;
+			while(rs.next())
+			{
+				int bnum = rs.getInt("BNUM");
 				String title = rs.getString("TITLE");
 				String author = rs.getString("AUTHOR");
-				java.sql.Date rDate = rs.getDate("RDATE");
+				java.sql.Date rdate = rs.getDate("RDATE");
 				String contents = rs.getString("CONTENTS");
-				int hits = rs.getInt("HITS");
+				ttlPages = rs.getInt("TTLPAGES");
+				System.out.println(title);
+				
 				BoardVO board = new BoardVO();
-				board.setbNum(bNum);
+				board.setBnum(bnum);
 				board.setTitle(title);
 				board.setAuthor(author);
-				board.setrDate(rDate);
+				board.setRdate(rdate);
 				board.setContents(contents);
-				board.setHits(hits);
-
+System.out.println("여기까지 오나요?");
 				list.add(board);
 			}
-
-			return list;
-		} catch (Exception ex) {
+			
+			//int currentPage, int itemsPerPage, int totalItems
+			Pagination<BoardVO> pagination = new Pagination(page, 3, ttlPages);
+			pagination.setItems(list);
+			return pagination;
+		}catch(Exception ex) {
 			ex.printStackTrace();
-		} finally {
+		}finally {
 			closeAll();
 		}
-
 		return null;
 	}
+	
+	
+	private void closeAll()
+	{
+		try {
+			if(rs!=null) rs.close();
+			if(pstmt!=null) pstmt.close();
+			if(conn!=null) conn.close();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
 
-	public BoardVO find(int bNum, String cmd) {
-		int hits = 0;
-		if (cmd.equals("findDetail")) {
-			hits = upHits(bNum);
-		} else if (cmd.equals("findEdit")) {
-			hits = checkHits(bNum);
-		}
-		System.out.println("hits를 확인하는 메세지 : " + hits);
+	public BoardVO boardByBnum(int bnum) 
+	{
 		getConn();
-		BoardVO board = new BoardVO();
-		String sql = "SELECT * FROM board WHERE bnum=?";
+		String sql = "SELECT * FROM board2 WHERE bnum=?";
 
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, bNum);
+			pstmt.setInt(1, bnum);
 			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				int fingbNum = rs.getInt("BNUM");
-				String title = rs.getString("title");
-				String author = rs.getString("AUTHOR");
-				java.sql.Date rDate = rs.getDate("RDATE");
-				String contents = rs.getString("CONTENTS");
 
-				board.setbNum(fingbNum);
+			if(rs.next())    // VALUES(board_seq.NEXTVAL, SYSDATE, ?, ?, ?)
+			{
+				int bn= rs.getInt("BNUM");
+				String title = rs.getString("TITLE");
+				String author = rs.getString("AUTHOR");
+				java.sql.Date rdate = rs.getDate("RDATE");
+				String contents = rs.getString("CONTENTS");
+				
+				BoardVO board = new BoardVO();
+				board.setBnum(bn);
 				board.setTitle(title);
 				board.setAuthor(author);
-				board.setrDate(rDate);
+				board.setRdate(rdate);
 				board.setContents(contents);
-				board.setHits(hits);
-
 				return board;
 			}
-		} catch (Exception ex) {
+		}catch(Exception ex) {
 			ex.printStackTrace();
-		} finally {
+		}finally {
 			closeAll();
-		}
-
-		return null;
-	}
-
-	private int checkHits(int bNum) {
-		getConn();
-		String sql = "SELECT * FROM board WHERE bnum=?";
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, bNum);
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				int hits = rs.getInt("hits");
-				return hits;
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			closeAll();
-		}
-		return 0;
-
-	}
-
-	private int upHits(int bNum) {
-		int hits = checkHits(bNum);
-		int upHits = ++hits;
-		getConn();
-		String sql = "UPDATE board SET hits=? WHERE bnum=?";
-		/* "UPDATE board SET hits=hits+1 WHERE bnum=?" */
-
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, hits);
-			pstmt.setInt(2, bNum);
-			int res = pstmt.executeUpdate();
-			if (res > 0) {
-				return upHits;
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			closeAll();
-		}
-		return 0;
-
-	}
-	
-	public List<BoardVO> search(String cat, String keyword) {
-		if(cat.equals("번호")) {
-		getConn();
-		String sql = "SELECT * FROM board WHERE bnum ?";
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, Integer.parseInt(keyword));
-			rs = pstmt.executeQuery();
-			List<BoardVO> list = new ArrayList<>();
-			while (rs.next()) {
-				int bNum = rs.getInt("BNUM");
-				System.out.println(bNum);
-				String title = rs.getString("TITLE");
-				String author = rs.getString("AUTHOR");
-				java.sql.Date rDate = rs.getDate("RDATE");
-				String contents = rs.getString("CONTENTS");
-				int hits = rs.getInt("HITS");
-				BoardVO board = new BoardVO();
-				board.setbNum(bNum);
-				board.setTitle(title);
-				board.setAuthor(author);
-				board.setrDate(rDate);
-				board.setContents(contents);
-				board.setHits(hits);
-
-				list.add(board);
-				
-					
-			}
-
-			return list;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			closeAll();
-		}
-		}
-		if(cat.equals("제목")) {
-		getConn();
-		String sql = "SELECT * FROM board WHERE title LIKE ?";
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, '%' + keyword + '%'); // "'%'||'" + keyword + "'||'%'"
-			System.out.println(sql);
-			rs = pstmt.executeQuery();
-			List<BoardVO> list = new ArrayList<>();
-			while (rs.next()) {
-				int bNum = rs.getInt("BNUM");
-				System.out.println(bNum);
-				String title = rs.getString("TITLE");
-				String author = rs.getString("AUTHOR");
-				java.sql.Date rDate = rs.getDate("RDATE");
-				String contents = rs.getString("CONTENTS");
-				int hits = rs.getInt("HITS");
-				BoardVO board = new BoardVO();
-				board.setbNum(bNum);
-				board.setTitle(title);
-				board.setAuthor(author);
-				board.setrDate(rDate);
-				board.setContents(contents);
-				board.setHits(hits);
-
-				list.add(board);
-				
-					
-			}
-
-			return list;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			closeAll();
-		}
 		}
 		return null;
 	}
+	/*
+	public boolean update(EmpVO emp)
+	{
+		getConn();
+		String sql = "UPDATE emp2 SET deptno=?, sal=? WHERE empno=?";
 
-	
-	
-	public boolean delete(int bnum) 
-	   {
-	      getConn();
-	         
-	      String sql = "DELETE board WHERE bnum=?"; 
-	      try
-	      {
-	         pstmt = conn.prepareStatement(sql);
-	         pstmt.setInt(1, bnum);
-	         int res = pstmt.executeUpdate();
-	         
-	         return res>0;
-	      }
-	      catch (Exception e) {e.printStackTrace();}
-	      finally {closeAll();}
-	      
-	      return false;
-	   }
-	private void closeAll() {
 		try {
-			if (rs != null)
-				rs.close();
-			if (pstmt != null)
-				pstmt.close();
-			if (conn != null)
-				conn.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, emp.getDeptno());
+			pstmt.setInt(2, emp.getSal());
+			pstmt.setInt(3, emp.getEmpno());
+			int rows = pstmt.executeUpdate();
+			
+			return rows>0;
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}finally {
+			closeAll();
 		}
+		return false;
+	}
+	
+	public boolean delete(int empno)
+	{
+		getConn();
+		String sql = "DELETE FROM emp2 WHERE empno=?";
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, empno);
+			int rows = pstmt.executeUpdate();
+			
+			return rows>0;
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}finally {
+			closeAll();
+		}
+		return false;
 	}
 
+	public boolean add(EmpVO emp) {
+		getConn();
+		String sql = "INSERT INTO emp2 VALUES(?,?,?,?,?,?,?,?)";
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, emp.getEmpno());
+			pstmt.setString(2, emp.getEname());
+			pstmt.setString(3, emp.getJob());
+			pstmt.setInt(4,  emp.getMgr());
+			pstmt.setDate(5, emp.getHiredate());
+			pstmt.setInt(6, emp.getSal());
+			pstmt.setFloat(7, emp.getComm());
+			pstmt.setInt(8, emp.getDeptno());
+			
+			int rows = pstmt.executeUpdate();
+			
+			return rows>0;
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}finally {
+			closeAll();
+		}
+		return false;
+	}*/
 }
+

@@ -1,37 +1,23 @@
 package com.mbcac.board;
 
-import java.sql.Date;
-
-public class BoardVO {
-
-	private int bNum;
+public class BoardVO 
+{
+	private int bnum;
 	private String title;
 	private String author;
+	private java.sql.Date rdate;
 	private String contents;
-	private java.sql.Date rDate;
 	private int hits;
 	private int parent;
+	
+	public BoardVO() {}
 
-	public BoardVO() {
-
+	public int getBnum() {
+		return bnum;
 	}
 
-	public BoardVO(int bNum, String title, String author, String contents, Date rDate, int hits) {
-		super();
-		this.bNum = bNum;
-		this.title = title;
-		this.author = author;
-		this.contents = contents;
-		this.rDate = rDate;
-		this.hits = hits;
-	}
-
-	public int getbNum() {
-		return bNum;
-	}
-
-	public void setbNum(int bNum) {
-		this.bNum = bNum;
+	public void setBnum(int bnum) {
+		this.bnum = bnum;
 	}
 
 	public String getTitle() {
@@ -50,20 +36,20 @@ public class BoardVO {
 		this.author = author;
 	}
 
+	public java.sql.Date getRdate() {
+		return rdate;
+	}
+
+	public void setRdate(java.sql.Date rdate) {
+		this.rdate = rdate;
+	}
+
 	public String getContents() {
 		return contents;
 	}
 
 	public void setContents(String contents) {
 		this.contents = contents;
-	}
-
-	public java.sql.Date getrDate() {
-		return rDate;
-	}
-
-	public void setrDate(java.sql.Date rDate) {
-		this.rDate = rDate;
 	}
 
 	public int getHits() {
@@ -81,6 +67,5 @@ public class BoardVO {
 	public void setParent(int parent) {
 		this.parent = parent;
 	}
-
 	
 }
